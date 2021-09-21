@@ -7,17 +7,17 @@
 # This is a list of valid fully-qualified domain names (FQDNs) for the NetBox server. NetBox will not permit write
 # access to the server via any other hostnames. The first FQDN in the list will be treated as the preferred name.
 #
-# Example: ALLOWED_HOSTS = ['netbox.example.com', 'netbox.internal.local']
+# Example: ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 ALLOWED_HOSTS = []
 
 # PostgreSQL database configuration. See the Django documentation for a complete list of available parameters:
 #   https://docs.djangoproject.com/en/stable/ref/settings/#databases
 DATABASE = {
-    'NAME': 'netbox',         # Database name
-    'USER': '',               # PostgreSQL username
-    'PASSWORD': '',           # PostgreSQL password
-    'HOST': 'localhost',      # Database server
-    'PORT': '',               # Database port (leave blank for default)
+    'NAME': os.environ.get('POSTGRESQL_ADDON_DB', ''),
+    'USER': os.environ.get('POSTGRESQL_ADDON_USER', ''),
+    'PASSWORD': os.environ.get('POSTGRESQL_ADDON_PASSWORD', ''),
+    'HOST': os.environ.get('POSTGRESQL_ADDON_HOST', ''),
+    'PORT': os.environ.get('POSTGRESQL_ADDON_PORT', 5432),
     'CONN_MAX_AGE': 300,      # Max database connection age
 }
 
@@ -26,12 +26,12 @@ DATABASE = {
 # to use two separate database IDs.
 REDIS = {
     'tasks': {
-        'HOST': 'localhost',
-        'PORT': 6379,
+        'HOST': os.environ.get('REDIS_HOST', '127.0.0.1'),
+        'PORT': int(os.environ.get('REDIS_PORT', '6379')),
         # Comment out `HOST` and `PORT` lines and uncomment the following if using Redis Sentinel
         # 'SENTINELS': [('mysentinel.redis.example.com', 6379)],
         # 'SENTINEL_SERVICE': 'netbox',
-        'PASSWORD': '',
+        'PASSWORD': os.environ.get('REDIS_PASSWORD', ''),
         'DATABASE': 0,
         'SSL': False,
         # Set this to True to skip TLS certificate verification
@@ -39,12 +39,12 @@ REDIS = {
         # 'INSECURE_SKIP_TLS_VERIFY': False,
     },
     'caching': {
-        'HOST': 'localhost',
-        'PORT': 6379,
+        'HOST': os.environ.get('REDIS_HOST', '127.0.0.1'),
+        'PORT': int(os.environ.get('REDIS_PORT', '6379')),
         # Comment out `HOST` and `PORT` lines and uncomment the following if using Redis Sentinel
         # 'SENTINELS': [('mysentinel.redis.example.com', 6379)],
         # 'SENTINEL_SERVICE': 'netbox',
-        'PASSWORD': '',
+        'PASSWORD': os.environ.get('REDIS_PASSWORD', ''),
         'DATABASE': 1,
         'SSL': False,
         # Set this to True to skip TLS certificate verification
