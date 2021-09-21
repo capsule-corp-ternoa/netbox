@@ -25,6 +25,7 @@ DATABASE = {
 # Redis database settings. Redis is used for caching and for queuing background tasks such as webhook events. A separate
 # configuration exists for each. Full connection details are required in both sections, and it is strongly recommended
 # to use two separate database IDs.
+
 REDIS = {
     'tasks': {
         'HOST': os.environ.get('REDIS_HOST', '127.0.0.1'),
@@ -33,11 +34,9 @@ REDIS = {
         # 'SENTINELS': [('mysentinel.redis.example.com', 6379)],
         # 'SENTINEL_SERVICE': 'netbox',
         'PASSWORD': os.environ.get('REDIS_PASSWORD', ''),
-        'DATABASE': 0,
+        'DATABASE': 1,
+        'DEFAULT_TIMEOUT': 300,
         'SSL': False,
-        # Set this to True to skip TLS certificate verification
-        # This can expose the connection to attacks, be careful
-        # 'INSECURE_SKIP_TLS_VERIFY': False,
     },
     'caching': {
         'HOST': os.environ.get('REDIS_HOST', '127.0.0.1'),
@@ -46,11 +45,9 @@ REDIS = {
         # 'SENTINELS': [('mysentinel.redis.example.com', 6379)],
         # 'SENTINEL_SERVICE': 'netbox',
         'PASSWORD': os.environ.get('REDIS_PASSWORD', ''),
-        'DATABASE': 1,
+        'DATABASE': 2,
+        'DEFAULT_TIMEOUT': 300,
         'SSL': False,
-        # Set this to True to skip TLS certificate verification
-        # This can expose the connection to attacks, be careful
-        # 'INSECURE_SKIP_TLS_VERIFY': False,
     }
 }
 
@@ -58,8 +55,7 @@ REDIS = {
 # For optimal security, SECRET_KEY should be at least 50 characters in length and contain a mix of letters, numbers, and
 # symbols. NetBox will not run without this defined. For more information, see
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-SECRET_KEY
-SECRET_KEY = '...'
-
+SECRET_KEY = os.environ.get('SECRET_KEY', '')
 
 #########################
 #                       #
@@ -121,7 +117,7 @@ CUSTOM_VALIDATORS = {
 # Set to True to enable server debugging. WARNING: Debugging introduces a substantial performance penalty and may reveal
 # sensitive information about your installation. Only enable debugging while performing testing. Never enable debugging
 # on a production system.
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', 'true').lower() == 'true'
 
 # Email settings
 EMAIL = {
@@ -130,7 +126,9 @@ EMAIL = {
     'USERNAME': os.environ.get('EMAIL_USERNAME', ''),
     'PASSWORD': os.environ.get('EMAIL_PASSWORD', ''),
     'TIMEOUT': 10,  # seconds
-    'FROM_EMAIL': os.environ.get('EMAIL_FROM_EMAIL', ''),}
+    'FROM_EMAIL': os.environ.get('EMAIL_FROM_EMAIL', ''),
+}
+
 
 # Enforcement of unique IP space can be toggled on a per-VRF basis. To enforce unique IP space within the global table
 # (all prefixes and IP addresses not assigned to a VRF), set ENFORCE_GLOBAL_UNIQUE to True.
@@ -167,7 +165,7 @@ LOGIN_PERSISTENCE = False
 
 # Setting this to True will permit only authenticated users to access any part of NetBox. By default, anonymous users
 # are permitted to access most data in NetBox but not make any changes.
-LOGIN_REQUIRED = False
+LOGIN_REQUIRED = True
 
 # The length of time (in seconds) for which a user will remain logged into the web UI before being prompted to
 # re-authenticate. (Default: 1209600 [14 days])
@@ -278,3 +276,10 @@ TIME_FORMAT = 'g:i a'
 SHORT_TIME_FORMAT = 'H:i:s'
 DATETIME_FORMAT = 'N j, Y g:i a'
 SHORT_DATETIME_FORMAT = 'Y-m-d H:i'
+
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'netbox', "static"),
+]
