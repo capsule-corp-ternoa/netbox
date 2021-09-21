@@ -8,7 +8,7 @@
 # access to the server via any other hostnames. The first FQDN in the list will be treated as the preferred name.
 #
 # Example: ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 
 # PostgreSQL database configuration. See the Django documentation for a complete list of available parameters:
 #   https://docs.djangoproject.com/en/stable/ref/settings/#databases
@@ -124,15 +124,12 @@ DEBUG = False
 
 # Email settings
 EMAIL = {
-    'SERVER': 'localhost',
-    'PORT': 25,
-    'USERNAME': '',
-    'PASSWORD': '',
-    'USE_SSL': False,
-    'USE_TLS': False,
+    'SERVER': os.environ.get('EMAIL_SERVER', 'localhost'),
+    'PORT': int(os.environ.get('EMAIL_PORT', '25')),
+    'USERNAME': os.environ.get('EMAIL_USERNAME', ''),
+    'PASSWORD': os.environ.get('EMAIL_PASSWORD', ''),
     'TIMEOUT': 10,  # seconds
-    'FROM_EMAIL': '',
-}
+    'FROM_EMAIL': os.environ.get('EMAIL_FROM_EMAIL', ''),}
 
 # Enforcement of unique IP space can be toggled on a per-VRF basis. To enforce unique IP space within the global table
 # (all prefixes and IP addresses not assigned to a VRF), set ENFORCE_GLOBAL_UNIQUE to True.
